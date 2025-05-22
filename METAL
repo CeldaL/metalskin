@@ -1,0 +1,41 @@
+local UserInputService = game:GetService("UserInputService")
+
+-- Variable para controlar si MetalSkin está activado
+local metalActive = false
+
+-- Variable para controlar el cooldown
+local canToggle = true
+
+-- Función para activar/desactivar MetalSkin
+local function toggleMetalSkin()
+    if metalActive then
+        -- Si está activado, desactivarlo
+        game:GetService("ReplicatedStorage").Events.Transform:FireServer("metalSkin", false)
+        metalActive = false
+    else
+        -- Si está desactivado, activarlo
+        game:GetService("ReplicatedStorage").Events.Transform:FireServer("metalSkin", true)
+        metalActive = true
+    end
+end
+
+-- Detectar la presión de la tecla "R" para activar/desactivar MetalSkin
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end -- Evita que el evento se procese si el juego ya lo ha procesado
+
+    if input.UserInputType == Enum.UserInputType.Keyboard then
+        if input.KeyCode == Enum.KeyCode.R and canToggle then
+            -- Ejecutar la función solo si no hay cooldown
+            toggleMetalSkin()
+
+            -- Desactivar el cooldown
+            canToggle = false
+
+            -- Esperar 1 segundo antes de permitir otra acción
+            wait(1)
+
+            -- Activar nuevamente el cooldown
+            canToggle = true
+        end
+    end
+end)
